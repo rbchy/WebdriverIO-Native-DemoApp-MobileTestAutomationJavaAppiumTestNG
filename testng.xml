@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="WDIODemoApp Test Suite" verbose="1" parallel="none">
+
+    <listeners>
+        <listener class-name="listeners.ScreenshotListener"/>
+    </listeners>
+
+    <test name="Login Tests">
+        <parameter name="deviceName"      value="emulator-5554"/>
+        <parameter name="platformVersion" value="13"/>
+        <classes>
+            <class name="tests.LoginTest"/>
+        </classes>
+    </test>
+
+    <test name="Form Tests">
+        <parameter name="deviceName"      value="emulator-5554"/>
+        <parameter name="platformVersion" value="13"/>
+        <classes>
+            <class name="tests.FormTest"/>
+        </classes>
+    </test>
+
+    <test name="Swipe Tests">
+        <parameter name="deviceName"      value="emulator-5554"/>
+        <parameter name="platformVersion" value="13"/>
+        <classes>
+            <class name="tests.SwipeTest"/>
+        </classes>
+    </test>
+
+    <test name="Alert Tests">
+        <parameter name="deviceName"      value="emulator-5554"/>
+        <parameter name="platformVersion" value="13"/>
+        <classes>
+            <class name="tests.AlertTest"/>
+        </classes>
+    </test>
+
+</suite>
