@@ -38,7 +38,9 @@ public class LoginPage {
 
     private static final By EMAIL_INPUT    = AppiumBy.accessibilityId("input-email");
     private static final By PASSWORD_INPUT = AppiumBy.accessibilityId("input-password");
-    private static final By LOGIN_BUTTON   = AppiumBy.accessibilityId("login-btn");
+    // The app's real accessibility id is "button-LOGIN" (seen in the UI hierarchy on the CI
+    // emulator). "login-btn" never matched, so every tap went through the slow fallbacks.
+    private static final By LOGIN_BUTTON   = AppiumBy.accessibilityId("button-LOGIN");
     private static final By ERROR_MESSAGE  = AppiumBy.accessibilityId("generic-error-message");
 
     public LoginPage(AndroidDriver driver) {

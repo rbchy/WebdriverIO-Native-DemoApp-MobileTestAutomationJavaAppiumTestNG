@@ -25,7 +25,9 @@ public class AlertPage {
     private final AndroidDriver driver;
 
     // Standard AlertDialog ids
-    private static final By TITLE    = By.id("android:id/alertTitle");
+    // This app's dialog theme uses its own title id; stock Android uses android:id/alertTitle.
+    private static final By TITLE    = By.xpath(
+            "//*[@resource-id='com.wdiodemoapp:id/alert_title' or @resource-id='android:id/alertTitle']");
     private static final By MESSAGE  = By.id("android:id/message");
     private static final By POSITIVE = By.id("android:id/button1"); // OK
     private static final By NEGATIVE = By.id("android:id/button2"); // CANCEL

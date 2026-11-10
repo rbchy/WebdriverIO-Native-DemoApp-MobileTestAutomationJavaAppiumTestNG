@@ -87,6 +87,7 @@ jobs:
           script: echo "AVD snapshot created"
 
       - name: Run the TestNG suite
+        timeout-minutes: 35
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.API_LEVEL }}

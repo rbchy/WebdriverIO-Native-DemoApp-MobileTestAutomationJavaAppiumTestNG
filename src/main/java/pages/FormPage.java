@@ -26,7 +26,7 @@ public class FormPage {
     private final AndroidDriver driver;
 
     private static final By TEXT_INPUT        = AppiumBy.accessibilityId("text-input");
-    private static final By TEXT_INPUT_RESULT = AppiumBy.accessibilityId("text-input-result");
+    private static final By TEXT_INPUT_RESULT = AppiumBy.accessibilityId("input-text-result"); // was "text-input-result", which does not exist
     private static final By SWITCH_TOGGLE     = AppiumBy.accessibilityId("switch");
     private static final By DROPDOWN          = AppiumBy.accessibilityId("Dropdown");
     private static final By SLIDER            = AppiumBy.accessibilityId("slider");

@@ -30,6 +30,10 @@ public class LoginTest extends BaseTest {
         homePage.goToLogin();
         Assert.assertTrue(loginPage.isLoginScreenDisplayed(),
             "Login screen should be displayed after tapping Login tab");
+        // Start every test with an empty form: the fields keep their text between tests,
+        // so "empty email" used to submit the email typed by the previous test - and log in.
+        loginPage.clearEmailField();
+        loginPage.clearPasswordField();
     }
 
     // ------------------------------------------------------------------ //
