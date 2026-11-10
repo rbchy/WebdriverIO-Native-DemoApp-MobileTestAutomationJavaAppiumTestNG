@@ -56,7 +56,7 @@ jobs:
       - name: Install Appium 2 + UiAutomator2 driver
         run: |
           npm install -g appium@2
-          appium driver install uiautomator2
+          appium driver install uiautomator2@3.10.0   # 3.x is the last driver line that supports Appium 2
           appium --version
 
       - name: Download the app under test
