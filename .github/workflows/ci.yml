@@ -98,8 +98,8 @@ jobs:
           disable-animations: true
           script: |
             adb devices
-            nohup appium --log-level warn --log appium.log --relaxed-security > /dev/null 2>&1 & sleep 8 ; curl -s http://127.0.0.1:4723/status
-            mvn -B -ntp test ; status=$? ; pkill -f appium || true ; exit $status
+            nohup appium --log-level warn --log appium.log --relaxed-security > /dev/null 2>&1 & echo $! > appium.pid ; sleep 8 ; curl -s http://127.0.0.1:4723/status
+            mvn -B -ntp test ; status=$? ; kill "$(cat appium.pid)" 2>/dev/null ; exit $status
 
       - name: Test summary
         if: always()

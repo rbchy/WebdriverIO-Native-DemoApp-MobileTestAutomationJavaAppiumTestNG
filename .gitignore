@@ -8,3 +8,4 @@ test-output/
 .DS_Store
 *.zip
 appium.log
+appium.pid
