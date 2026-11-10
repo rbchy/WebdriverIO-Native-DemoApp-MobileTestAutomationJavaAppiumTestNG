@@ -45,18 +45,8 @@ public class FormTest extends BaseTest {
         formPage.enterTextInput(testText);
 
         String result = formPage.getTextInputResult();
-
-        // Primary: result element contains the text
-        boolean found = result.contains(testText);
-
-        // Fallback: text appears anywhere in the page source
-        if (!found) {
-            found = driver.getPageSource().contains(testText);
-        }
-
-        Assert.assertTrue(found,
-            "Text input result should contain: " + testText + " — got: " + result);
-        ExtentReportManager.getTest().info("Text input result: " + result);
+        Assert.assertEquals(result, testText,
+            "The 'You have typed' mirror should show exactly what was typed");
     }
 
     // ------------------------------------------------------------------ //
@@ -101,54 +91,34 @@ public class FormTest extends BaseTest {
     public void testDropdownSelection() {
         ExtentReportManager.createTest("TC-F03 : Dropdown Selection");
 
-        // Capture page source BEFORE selecting so we can detect any change
-        String before = driver.getPageSource();
+        // The old check passed if *anything* in the page source changed.
+        String choice = FormPage.DROPDOWN_OPTIONS[1]; // "Appium is awesome"
+        formPage.selectDropdownOption(choice);
+        Assert.assertEquals(formPage.getDropdownValue(), choice,
+            "The dropdown should show the option that was picked");
+        ExtentReportManager.getTest().info("Dropdown now shows: " + choice);
 
-        formPage.selectDropdownOption(2);
-
-        String after = driver.getPageSource();
-
-        // The page source should have changed in some way after selection
-        // (selected value, ARIA state, or new text rendered)
-        boolean changed = !before.equals(after);
-
-        // Also accept if a known option-2 label appears
-        boolean optionText = after.toLowerCase().contains("option 2")
-            || after.toLowerCase().contains("option2");
-
-        Assert.assertTrue(changed || optionText,
-            "Page should reflect a change after selecting dropdown option 2");
-        ExtentReportManager.getTest().info("Dropdown option 2 selected; page changed: " + changed);
+        String other = FormPage.DROPDOWN_OPTIONS[2];
+        formPage.selectDropdownOption(other);
+        Assert.assertEquals(formPage.getDropdownValue(), other, "Picking again should replace the value");
     }
 
     // ------------------------------------------------------------------ //
-    //  TC-F04 : Slider / bottom-of-form scroll verification               //
-    //                                                                      //
-    //  NOTE: WDIO Native Demo App v2.2.0 does NOT include a slider on     //
-    //  the Forms screen (the slider was added in a later version).         //
-    //  This test verifies that the Forms screen can be scrolled to the     //
-    //  bottom (SeekBar / slider absent). If a slider IS found in a future  //
-    //  version, it will be tested as well.                                 //
+    //  TC-F04 : Switch label follows the switch                           //
+    //  (v2.2.0 has no slider; the old TC-F04 passed by only checking that  //
+    //  the Forms screen was still there)                                   //
     // ------------------------------------------------------------------ //
-    @Test(priority = 4, description = "Slider should be displayed (if present) and form screen scrollable")
-    public void testSliderIsDisplayed() {
-        ExtentReportManager.createTest("TC-F04 : Slider / Form scroll");
+    @Test(priority = 4, description = "The label next to the switch says what the next tap will do")
+    public void testSwitchLabelFollowsState() {
+        ExtentReportManager.createTest("TC-F04 : Switch label");
 
-        boolean sliderFound = formPage.isSliderDisplayed();
-
-        if (sliderFound) {
-            ExtentReportManager.getTest().info("Slider found — testing drag interaction");
-            formPage.dragSliderRight(100);
-            ExtentReportManager.getTest().info("Slider dragged right without error");
-        } else {
-            // Slider is not present in WDIO Demo App v2.2.0.
-            // Verify the Forms screen is still accessible and scrollable.
-            ExtentReportManager.getTest().info(
-                "Slider not present in app v2.2.0 — verifying Forms screen is accessible");
-            Assert.assertTrue(formPage.isFormScreenDisplayed(),
-                "Forms screen should be accessible even without a slider element");
-            ExtentReportManager.getTest().info("Forms screen accessible — TC-F04 passed (slider N/A)");
-        }
+        boolean on = formPage.isSwitchOn();
+        Assert.assertEquals(formPage.getSwitchText(),
+            on ? "Click to turn the switch OFF" : "Click to turn the switch ON");
+        formPage.tapSwitch();
+        Assert.assertEquals(formPage.getSwitchText(),
+            on ? "Click to turn the switch ON" : "Click to turn the switch OFF");
+        formPage.tapSwitch(); // leave it as it was
     }
 
     // ------------------------------------------------------------------ //
@@ -161,11 +131,7 @@ public class FormTest extends BaseTest {
         String testText = "Test123";
         formPage.enterTextInput(testText);
 
-        String result = formPage.getTextInputResult();
-        boolean found = result.contains(testText) || driver.getPageSource().contains(testText);
-
-        Assert.assertTrue(found,
-            "Text input should accept alphanumeric text. Got: " + result);
-        ExtentReportManager.getTest().info("Alphanumeric text accepted: " + result);
+        Assert.assertEquals(formPage.getTextInputResult(), testText,
+            "Text input should accept alphanumeric text");
     }
 }

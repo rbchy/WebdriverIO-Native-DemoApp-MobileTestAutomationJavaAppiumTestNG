@@ -105,6 +105,12 @@ jobs:
         run: |
           for f in target/surefire-reports/*.txt; do [ -f "$f" ] && cat "$f"; done
           grep -ho '<testcase [^>]*' target/surefire-reports/TEST-*.xml 2>/dev/null || true
+          # What was on screen when a test failed: visible texts and accessibility ids
+          for x in test-output/screenshots/*_FAILED.xml; do
+            [ -f "$x" ] || continue
+            echo "=== $x"
+            grep -oE '(text|content-desc|resource-id)="[^"]+"' "$x" | sort -u | head -60
+          done
 
       - name: Upload reports (Extent, screenshots, surefire, Appium log)
         if: always()

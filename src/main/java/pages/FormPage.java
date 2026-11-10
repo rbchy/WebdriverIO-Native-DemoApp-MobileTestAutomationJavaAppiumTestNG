@@ -53,21 +53,19 @@ public class FormPage {
         sleep(1000);
     }
 
+    /**
+     * Text of the "You have typed:" mirror under the input (accessibility id text-input-result).
+     * It no longer falls back to the input field itself: reading the text back from the field
+     * that was just typed into made the check pass even if the mirror never updated.
+     */
     public String getTextInputResult() {
         try {
             WebElement el = WaitUtils.waitForVisible(driver, TEXT_INPUT_RESULT, 8);
             String v = el.getText();
-            if (v != null && !v.isEmpty()) return v;
-            v = el.getAttribute("text");
-            if (v != null && !v.isEmpty()) return v;
-            v = el.getAttribute("content-desc");
-            if (v != null && !v.isEmpty()) return v;
-        } catch (Exception ignored) {}
-        try {
-            String v = driver.findElement(TEXT_INPUT).getAttribute("text");
-            if (v != null && !v.isEmpty()) return v;
-        } catch (Exception ignored) {}
-        return "";
+            return v == null ? "" : v;
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     // ------------------------------------------------------------------ //
@@ -100,6 +98,37 @@ public class FormPage {
     public void openDropdown() {
         WaitUtils.waitForVisible(driver, DROPDOWN, 10).click();
         sleep(1200);
+    }
+
+    /** The three entries of the demo app's picker, in order. */
+    public static final String[] DROPDOWN_OPTIONS = {
+        "webdriver.io is awesome", "Appium is awesome", "This app is awesome"
+    };
+
+    /** Opens the picker and taps the entry with exactly this text. */
+    public void selectDropdownOption(String optionText) {
+        openDropdown();
+        WaitUtils.waitForClickable(driver, AppiumBy.androidUIAutomator(
+                "new UiSelector().text(\"" + optionText + "\")"), 10).click();
+        sleep(600);
+    }
+
+    /** The value currently shown in the Dropdown field. */
+    public String getDropdownValue() {
+        WebElement dropdown = WaitUtils.waitForVisible(driver, DROPDOWN, 10);
+        List<WebElement> edits = dropdown.findElements(By.className("android.widget.EditText"));
+        String v = edits.isEmpty() ? dropdown.getText() : edits.get(0).getText();
+        return v == null ? "" : v;
+    }
+
+    /** The label next to the switch: "Click to turn the switch ON" / "... OFF". */
+    public String getSwitchText() {
+        try {
+            String v = WaitUtils.waitForVisible(driver, AppiumBy.accessibilityId("switch-text"), 8).getText();
+            return v == null ? "" : v;
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     public void selectDropdownOption(int optionNumber) {

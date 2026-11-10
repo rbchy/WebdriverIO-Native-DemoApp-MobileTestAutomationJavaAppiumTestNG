@@ -108,12 +108,14 @@ public class BaseTest {
         }
     }
 
-    @AfterClass
+    // alwaysRun: when a class's set-up is skipped, TestNG would otherwise skip these too -
+    // the driver session leaked and @AfterSuite never wrote the ExtentReport.
+    @AfterClass(alwaysRun = true)
     public void tearDown() {
         if (driver != null) driver.quit();
     }
 
-    @AfterSuite
+    @AfterSuite(alwaysRun = true)
     public void flushReport() {
         ExtentReportManager.getReportInstance().flush();
     }

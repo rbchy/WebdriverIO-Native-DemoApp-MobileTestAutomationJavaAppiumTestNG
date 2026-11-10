@@ -43,6 +43,8 @@ public class LoginTest extends BaseTest {
 
         Assert.assertTrue(loginPage.isLoginSuccessful(),
             "User should be logged in with valid credentials");
+        Assert.assertFalse(loginPage.isValidationMessagePresentNow(LoginPage.EMAIL_ERROR));
+        loginPage.dismissSuccessDialog();
         ExtentReportManager.getTest().info("Login successful with valid credentials");
     }
 
@@ -56,8 +58,10 @@ public class LoginTest extends BaseTest {
         loginPage.enterPassword("Password1");
         loginPage.tapLogin();
 
-        Assert.assertTrue(loginPage.isErrorMessageDisplayed(),
-            "Error message should appear when email is empty");
+        Assert.assertTrue(loginPage.isEmailErrorShown(),
+            "'" + LoginPage.EMAIL_ERROR + "' should appear when email is empty");
+        Assert.assertFalse(loginPage.isValidationMessagePresentNow(LoginPage.PASSWORD_ERROR),
+            "an 8+ character password must not be flagged");
         ExtentReportManager.getTest().info("Error displayed for empty email");
     }
 
@@ -71,8 +75,10 @@ public class LoginTest extends BaseTest {
         loginPage.enterEmail("alice@example.com");
         loginPage.tapLogin();
 
-        Assert.assertTrue(loginPage.isErrorMessageDisplayed(),
-            "Error message should appear when password is empty");
+        Assert.assertTrue(loginPage.isPasswordErrorShown(),
+            "'" + LoginPage.PASSWORD_ERROR + "' should appear when password is empty");
+        Assert.assertFalse(loginPage.isValidationMessagePresentNow(LoginPage.EMAIL_ERROR),
+            "a valid email must not be flagged");
         ExtentReportManager.getTest().info("Error displayed for empty password");
     }
 
@@ -85,8 +91,8 @@ public class LoginTest extends BaseTest {
 
         loginPage.login("not-an-email", "Password1");
 
-        Assert.assertTrue(loginPage.isErrorMessageDisplayed(),
-            "Error message should appear for invalid email format");
+        Assert.assertTrue(loginPage.isEmailErrorShown(),
+            "'" + LoginPage.EMAIL_ERROR + "' should appear for an invalid email format");
         ExtentReportManager.getTest().info("Error displayed for invalid email format");
     }
 
@@ -99,8 +105,8 @@ public class LoginTest extends BaseTest {
 
         loginPage.tapLogin();
 
-        Assert.assertTrue(loginPage.isErrorMessageDisplayed(),
-            "Error message should appear when both fields are empty");
+        Assert.assertTrue(loginPage.isEmailErrorShown(), "email message expected");
+        Assert.assertTrue(loginPage.isPasswordErrorShown(), "password message expected");
         ExtentReportManager.getTest().info("Error displayed when both fields are empty");
     }
 }

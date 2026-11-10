@@ -11,6 +11,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class ScreenshotListener implements ITestListener {
 
@@ -23,8 +24,13 @@ public class ScreenshotListener implements ITestListener {
                 String folder = System.getProperty("user.dir") + "/test-output/screenshots/";
                 new File(folder).mkdirs();
                 String fileName = result.getMethod().getMethodName() + "_FAILED.png";
-                Files.copy(srcFile.toPath(), Paths.get(folder + fileName));
+                // REPLACE_EXISTING: a second failure of the same test (re-run, or a stale file from an
+                // earlier run) used to throw FileAlreadyExistsException and the screenshot was lost.
+                Files.copy(srcFile.toPath(), Paths.get(folder + fileName), StandardCopyOption.REPLACE_EXISTING);
                 System.out.println("Screenshot saved: " + folder + fileName);
+                // The UI hierarchy at the moment of failure: shows the real accessibility ids / texts.
+                Files.writeString(Paths.get(folder + result.getMethod().getMethodName() + "_FAILED.xml"),
+                        driver.getPageSource());
 
                 if (ExtentReportManager.getTest() != null) {
                     ExtentReportManager.getTest().log(Status.FAIL,

@@ -372,16 +372,37 @@ public class LoginPage {
     //  Assertions                                                          //
     // ------------------------------------------------------------------ //
 
-    public boolean isErrorMessageDisplayed() {
-        try { WaitUtils.waitForVisible(driver, ERROR_MESSAGE, 8); return true; }
-        catch (Exception e) {
-            String src = driver.getPageSource();
-            return src.contains("is not correct")
-                || src.contains("Please provide")
-                || src.contains("valid email")
-                || src.contains("Invalid")
-                || src.contains("error");
+    /** Validation texts the WDIO demo app shows under the fields. */
+    public static final String EMAIL_ERROR    = "Please enter a valid email address";
+    public static final String PASSWORD_ERROR = "Please enter at least 8 characters";
+
+    /**
+     * True when the given validation message is on screen.
+     * (The old check also accepted any page source containing "error" or "Invalid",
+     * which made a negative test pass without the app showing any message, and it
+     * did not know the password message at all, so TC-L03 always failed.)
+     */
+    public boolean isValidationMessageShown(String message) {
+        try {
+            WaitUtils.waitForVisible(driver, AppiumBy.androidUIAutomator(
+                    "new UiSelector().text(\"" + message + "\")"), 6);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
+    }
+
+    public boolean isEmailErrorShown()    { return isValidationMessageShown(EMAIL_ERROR); }
+    public boolean isPasswordErrorShown() { return isValidationMessageShown(PASSWORD_ERROR); }
+
+    /** Immediate check (no wait) for "this message must NOT be shown" assertions. */
+    public boolean isValidationMessagePresentNow(String message) {
+        return !driver.findElements(AppiumBy.androidUIAutomator(
+                "new UiSelector().text(\"" + message + "\")")).isEmpty();
+    }
+
+    public boolean isErrorMessageDisplayed() {
+        return isEmailErrorShown() || isPasswordErrorShown();
     }
 
     public String getErrorMessageText() {
@@ -392,6 +413,11 @@ public class LoginPage {
     public boolean isLoginSuccessful() {
         try { WaitUtils.waitForTextInSource(driver, "You are logged in", 10); return true; }
         catch (Exception e) { return false; }
+    }
+
+    /** Closes the "Success / You are logged in!" dialog so the next test starts clean. */
+    public void dismissSuccessDialog() {
+        new AlertPage(driver).tapOk();
     }
 
     public void clearEmailField() {
