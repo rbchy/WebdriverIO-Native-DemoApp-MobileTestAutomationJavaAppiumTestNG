@@ -1,0 +1,10 @@
+target/
+test-output/
+*.apk
+.settings/
+.classpath
+.project
+.vscode/
+.DS_Store
+*.zip
+appium.log
